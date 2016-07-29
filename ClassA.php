@@ -10,5 +10,6 @@ class ClassA
 {
     public function __construct(){
       echo "hellow ClassA   fdfd";
+        
     }
 }
