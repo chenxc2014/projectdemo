@@ -60,11 +60,10 @@ function executeSoapWsdl(){
     try{
         // wsdl 方式调用
         $url = "http://localhost:44854/Service1.asmx?wsdl";
-        $soapClient = new SoapClient($url);
+        $soapClient = new SoapClient($url,['encoding'=>'utf-8']);
 
-        $header = new SoapHeader('http://tempuri.org/','CredentialSoapHeader',
-                        array('Username'=>'admin','Password'=>'123456'),true);
-        $soapClient->__setSoapHeaders($header);
+        $header = new SoapHeader('http://tempuri.org/','CredentialSoapHeader', array('Username'=>'admin','Password'=>'123456'));
+        $soapClient->__setSoapHeaders([$header]);
 
         $method = "MyTest";
         $param = ["name"=>"chenxc"];
@@ -80,7 +79,6 @@ function executeSoapWsdl(){
 
 function executeSoapNonWsdlSoapParam(){
     try{
-
         // non-wsdl 方式调用
         $url = "http://127.0.0.1:44854/Service1.asmx";
         $ns = "http://tempuri.org/"; // webservie的命名空间，默认是：http://tempuri.org/
@@ -110,23 +108,25 @@ function executeSoapNonWsdlSoapParam(){
 function executeSoapNonWsdlSoapVar(){
     try{
         // non-wsdl 方式调用
-        $ns_wsse = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";//WS-Security namespace
-        $ns_wsu = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";//WS-Security namespace
-
         $url = "http://127.0.0.1:44854/Service1.asmx";
         $ns = "http://tempuri.org/"; // webservie的命名空间，默认是：http://tempuri.org/
         $soapClient = new SoapClient(null,[
             "location"=>$url,
-            "uri"=>$ns]);
+            "uri"=>$ns,
+            "encoding"=>"utf-8",
+            'login' => 'fdipzone', // HTTP auth login
+            'password' => '123456' // HTTP auth password
+            ]);
 
         $method = "MyTest";
 
         $credentialSoapHeader = new CredentialSoapHeader("admin","123456");
-        $headerVar = new SoapVar($credentialSoapHeader,SOAP_ENC_OBJECT,"CredentialSoapHeader", $ns, "CredentialSoapHeader", $ns);
-        $header = new SoapHeader($ns,'CredentialSoapHeader', $headerVar,true,"fsdfs");
-        $soapClient->__setSoapHeaders($header);
+        $headerVar = new SoapVar($credentialSoapHeader,SOAP_ENC_OBJECT, null, null, "CredentialSoapHeader", $ns);
+        $headerVar = ['Username'=>'admin','Password'=>'123456'];
+        $header = new SoapHeader($ns,'CredentialSoapHeader', $headerVar);
+        $v = $soapClient->__setSoapHeaders([$header]);
 
-        $soapVar =[new SoapVar("chenxc", XSD_STRING, null, $ns, "name", $ns)];
+        $soapVar =[new SoapVar("chenxc", XSD_STRING, null, null, "name", $ns)];
         $result = $soapClient->__soapCall(
             $method,
             $soapVar,
@@ -139,5 +139,5 @@ function executeSoapNonWsdlSoapVar(){
     }
 }
 
-executeSoapWsdl();
+executeSoapNonWsdlSoapVar();
 
