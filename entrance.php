@@ -55,24 +55,89 @@ function __autoload($className){
 //];
 //$frist = current($arrData);
 
-try{
-    $url = "http://localhost:44854/Service1.asmx?wsdl";
-    $soapClient = new SoapClient($url);
-//    print_r($soapClient->__getFunctions());
-//    print_r($soapClient->__getTypes());
-//    $result = $soapClient->HelloWorld();
 
-    $header = new SoapHeader('http://tempuri.org/','CredentialSoapHeader',array('Username'=>'admin','Password'=>'123456'),true);
-    $soapClient->__setSoapHeaders($header);
+function executeSoapWsdl(){
+    try{
+        // wsdl 方式调用
+        $url = "http://localhost:44854/Service1.asmx?wsdl";
+        $soapClient = new SoapClient($url);
 
-    $method = "MyTest";
-    $param = ["name"=>"chenxc"];
-    $result = $soapClient->$method($param);
-    print_r($result);
-    $response = $method . "Result";
-    print_r($result->$response);
+        $header = new SoapHeader('http://tempuri.org/','CredentialSoapHeader',
+                        array('Username'=>'admin','Password'=>'123456'),true);
+        $soapClient->__setSoapHeaders($header);
+
+        $method = "MyTest";
+        $param = ["name"=>"chenxc"];
+        $result = $soapClient->$method($param);
+        $response = $method . "Result";
+        var_dump($result->$response);
+    }
+    catch(SoapFault $fault) {
+        echo '<br>'.$fault;
+    }
 }
-catch(SoapFault $fault) {
-    echo '<br>'.$fault;
+
+
+function executeSoapNonWsdlSoapParam(){
+    try{
+
+        // non-wsdl 方式调用
+        $url = "http://127.0.0.1:44854/Service1.asmx";
+        $ns = "http://tempuri.org/"; // webservie的命名空间，默认是：http://tempuri.org/
+        $soapClient = new SoapClient(null,[
+            "location"=>$url,
+            "uri"=>$ns]);
+
+//        $headerVar = new SoapVar(['Username'=>'admin','Password'=>'123456'],SOAP_ENC_ARRAY,null,$ns,"CredentialSoapHeader",$ns);
+//        $header = new SoapHeader('http://tempuri.org/','CredentialSoapHeader',
+//            array('Username'=>'admin','Password'=>'123456'),true);
+//        $soapClient->__setSoapHeaders($header);
+
+        $method = "MyTest";
+        $soapParam = [new SoapParam("chenxc","name")];
+        $result = $soapClient->__soapCall(
+            $method,
+            $soapParam,
+            ["soapaction"=> $ns . $method]
+        );
+        print_r($result);
+    }
+    catch(SoapFault $fault) {
+        echo '<br>'.$fault;
+    }
 }
+
+function executeSoapNonWsdlSoapVar(){
+    try{
+        // non-wsdl 方式调用
+        $ns_wsse = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";//WS-Security namespace
+        $ns_wsu = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";//WS-Security namespace
+
+        $url = "http://127.0.0.1:44854/Service1.asmx";
+        $ns = "http://tempuri.org/"; // webservie的命名空间，默认是：http://tempuri.org/
+        $soapClient = new SoapClient(null,[
+            "location"=>$url,
+            "uri"=>$ns]);
+
+        $method = "MyTest";
+
+        $credentialSoapHeader = new CredentialSoapHeader("admin","123456");
+        $headerVar = new SoapVar($credentialSoapHeader,SOAP_ENC_OBJECT,"CredentialSoapHeader", $ns, "CredentialSoapHeader", $ns);
+        $header = new SoapHeader($ns,'CredentialSoapHeader', $headerVar,true,"fsdfs");
+        $soapClient->__setSoapHeaders($header);
+
+        $soapVar =[new SoapVar("chenxc", XSD_STRING, null, $ns, "name", $ns)];
+        $result = $soapClient->__soapCall(
+            $method,
+            $soapVar,
+            ["soapaction"=> $ns . $method]
+        );
+        print_r($result);
+    }
+    catch(SoapFault $fault) {
+        echo '<br>'.$fault;
+    }
+}
+
+executeSoapWsdl();
 
