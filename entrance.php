@@ -55,5 +55,24 @@ function __autoload($className){
 //];
 //$frist = current($arrData);
 
-echo "chenxc111\r\n";
+try{
+    $url = "http://localhost:44854/Service1.asmx?wsdl";
+    $soapClient = new SoapClient($url);
+//    print_r($soapClient->__getFunctions());
+//    print_r($soapClient->__getTypes());
+//    $result = $soapClient->HelloWorld();
+
+    $header = new SoapHeader('http://tempuri.org/','CredentialSoapHeader',array('Username'=>'admin','Password'=>'123456'),true);
+    $soapClient->__setSoapHeaders($header);
+
+    $method = "MyTest";
+    $param = ["name"=>"chenxc"];
+    $result = $soapClient->$method($param);
+    print_r($result);
+    $response = $method . "Result";
+    print_r($result->$response);
+}
+catch(SoapFault $fault) {
+    echo '<br>'.$fault;
+}
 
