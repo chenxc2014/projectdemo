@@ -55,5 +55,89 @@ function __autoload($className){
 //];
 //$frist = current($arrData);
 
-echo "chenxc111\r\n";
+
+function executeSoapWsdl(){
+    try{
+        // wsdl 方式调用
+        $url = "http://localhost:44854/Service1.asmx?wsdl";
+        $soapClient = new SoapClient($url,['encoding'=>'utf-8']);
+
+        $header = new SoapHeader('http://tempuri.org/','CredentialSoapHeader', array('Username'=>'admin','Password'=>'123456'));
+        $soapClient->__setSoapHeaders([$header]);
+
+        $method = "MyTest";
+        $param = ["name"=>"chenxc"];
+        $result = $soapClient->$method($param);
+        $response = $method . "Result";
+        var_dump($result->$response);
+    }
+    catch(SoapFault $fault) {
+        echo '<br>'.$fault;
+    }
+}
+
+
+function executeSoapNonWsdlSoapParam(){
+    try{
+        // non-wsdl 方式调用
+        $url = "http://127.0.0.1:44854/Service1.asmx";
+        $ns = "http://tempuri.org/"; // webservie的命名空间，默认是：http://tempuri.org/
+        $soapClient = new SoapClient(null,[
+            "location"=>$url,
+            "uri"=>$ns]);
+
+//        $headerVar = new SoapVar(['Username'=>'admin','Password'=>'123456'],SOAP_ENC_ARRAY,null,$ns,"CredentialSoapHeader",$ns);
+//        $header = new SoapHeader('http://tempuri.org/','CredentialSoapHeader',
+//            array('Username'=>'admin','Password'=>'123456'),true);
+//        $soapClient->__setSoapHeaders($header);
+
+        $method = "MyTest";
+        $soapParam = [new SoapParam("chenxc","name")];
+        $result = $soapClient->__soapCall(
+            $method,
+            $soapParam,
+            ["soapaction"=> $ns . $method]
+        );
+        print_r($result);
+    }
+    catch(SoapFault $fault) {
+        echo '<br>'.$fault;
+    }
+}
+
+function executeSoapNonWsdlSoapVar(){
+    try{
+        // non-wsdl 方式调用
+        $url = "http://127.0.0.1:44854/Service1.asmx";
+        $ns = "http://tempuri.org/"; // webservie的命名空间，默认是：http://tempuri.org/
+        $soapClient = new SoapClient(null,[
+            "location"=>$url,
+            "uri"=>$ns,
+            "encoding"=>"utf-8",
+            'login' => 'fdipzone', // HTTP auth login
+            'password' => '123456' // HTTP auth password
+            ]);
+
+        $method = "MyTest";
+
+        $credentialSoapHeader = new CredentialSoapHeader("admin","123456");
+        $headerVar = new SoapVar($credentialSoapHeader,SOAP_ENC_OBJECT, null, null, "CredentialSoapHeader", $ns);
+        $headerVar = ['Username'=>'admin','Password'=>'123456'];
+        $header = new SoapHeader($ns,'CredentialSoapHeader', $headerVar);
+        $v = $soapClient->__setSoapHeaders([$header]);
+
+        $soapVar =[new SoapVar("chenxc", XSD_STRING, null, null, "name", $ns)];
+        $result = $soapClient->__soapCall(
+            $method,
+            $soapVar,
+            ["soapaction"=> $ns . $method]
+        );
+        print_r($result);
+    }
+    catch(SoapFault $fault) {
+        echo '<br>'.$fault;
+    }
+}
+
+executeSoapNonWsdlSoapVar();
 
