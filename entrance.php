@@ -139,5 +139,54 @@ function executeSoapNonWsdlSoapVar(){
     }
 }
 
-executeSoapNonWsdlSoapVar();
+
+function executeSoapWsdlSap(){
+    try{
+        $soap = new SoapClient(null,array('location'=>'http://lidappdb1.cofco.com:50000/dir/wsdl?p=sa/8cf1e89723a930039ef202f3c42e5df0','uri'=>'urn:cofcogroup.com:I_ECC:APP'));
+        //ws
+        $ns_wsse = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";//WS-Security namespace
+        $ns_wsu = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";//WS-Security namespace
+
+        $userT = new SoapVar('admin', XSD_STRING, NULL, $ns_wsse, NULL, $ns_wsse);
+        $passwT = new SoapVar('NnYZe7oD81Kd8QRS4tUMze/2CUs=', XSD_STRING, NULL, $ns_wsse, NULL, $ns_wsse);
+        $createdT = new SoapVar(time(), XSD_DATETIME, NULL, $ns_wsu, NULL, $ns_wsu);
+
+        $tmp = new UsernameT1($userT, $passwT, $createdT);
+        $uuT = new SoapVar($tmp, SOAP_ENC_OBJECT, NULL, $ns_wsse, 'UsernameToken', $ns_wsse);
+
+        $tmp = new UsernameT2($uuT);
+        $userToken = new SoapVar($tmp, SOAP_ENC_OBJECT, NULL, $ns_wsse, 'UsernameToken', $ns_wsse);
+
+        $secHeaderValue=new SoapVar($userToken, SOAP_ENC_OBJECT, NULL, $ns_wsse, 'Security', $ns_wsse);
+        $secHeader = new SoapHeader($ns_wsse, 'Security', $secHeaderValue);
+        $result2 = $soap->__soapCall("GetDeviceInformation",array(),null,$secHeader);
+        echo $result2;
+    }
+    catch(SoapFault $fault) {
+        echo '<br>'.$fault;
+    }
+}
+
+class UsernameT1 {
+    private $Username;
+//Name must be  identical to corresponding XML tag in SOAP header
+    private $Password;
+// Name must be  identical to corresponding XML tag in SOAP header
+    private $Created;
+    function __construct($username, $password, $created) {
+        $this->Username=$username;
+        $this->Password=$password;
+        $this->Created=$created;
+    }
+}
+
+class UserNameT2 {
+    private $UsernameToken;
+//Name must be  identical to corresponding XML tag in SOAP header
+    function __construct ($innerVal){
+        $this->UsernameToken = $innerVal;
+    }
+}
+
+executeSoapWsdlSap();
 
