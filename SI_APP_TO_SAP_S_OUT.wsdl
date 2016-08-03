@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:p1="urn:cofcogroup.com:I_APP:ECC" xmlns:p2="urn:cofcogroup.com:I_ECC:APP" xmlns:p3="urn:cofcogroup.com:I_APP:Common" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:cofcogroup.com:I_APP:ECC" name="SI_APP_TO_SAP_S_OUT">
+	<wsdl:types>
+		<xsd:schema xmlns="urn:cofcogroup.com:I_APP:Common" targetNamespace="urn:cofcogroup.com:I_APP:Common" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:element name="FMT_common">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="standard" type="p3:ExchangeFaultData"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="ExchangeLogData">
+				<xsd:annotation>
+					<xsd:appinfo source="http://sap.com/xi/VersionID">e7986a85523b11e68c9200000083a04a</xsd:appinfo>
+				</xsd:annotation>
+				<xsd:sequence>
+					<xsd:element minOccurs="0" name="severity" type="xsd:string"/>
+					<xsd:element name="text" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="url" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="id" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="ExchangeFaultData">
+				<xsd:annotation>
+					<xsd:appinfo source="http://sap.com/xi/VersionID">e783a182523b11e68a0700000083a04a</xsd:appinfo>
+				</xsd:annotation>
+				<xsd:sequence>
+					<xsd:element name="faultText" type="xsd:string"/>
+					<xsd:element minOccurs="0" name="faultUrl" type="xsd:string"/>
+					<xsd:element minOccurs="0" maxOccurs="unbounded" name="faultDetail" type="p3:ExchangeLogData"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+		<xsd:schema xmlns="urn:cofcogroup.com:I_APP:ECC" targetNamespace="urn:cofcogroup.com:I_APP:ECC" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:complexType name="DT_APP_RESPONSE">
+				<xsd:annotation>
+					<xsd:appinfo source="http://sap.com/xi/VersionID">07b98cce523e11e68de900000083a04a</xsd:appinfo>
+				</xsd:annotation>
+				<xsd:sequence>
+					<xsd:element minOccurs="0" name="Rcode" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">2f2e6a8e523d11e6b6d5005056b024c9</xsd:appinfo>
+							<xsd:documentation>返回状态</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="message" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">2f2e6a8f523d11e68fb2005056b024c9</xsd:appinfo>
+							<xsd:documentation>返回消息</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="repXML" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">2f2e6a90523d11e6cee7005056b024c9</xsd:appinfo>
+							<xsd:documentation>SAP返回的XML数据</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="DT_APP_REQUEST">
+				<xsd:annotation>
+					<xsd:appinfo source="http://sap.com/xi/VersionID">ff79f117523d11e6aca500000083a04a</xsd:appinfo>
+				</xsd:annotation>
+				<xsd:sequence>
+					<xsd:element minOccurs="0" default="SAP" name="bsid" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">e3d7b109523c11e6c2d3005056b024c9</xsd:appinfo>
+							<xsd:documentation>业务系统</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="bscode" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">e3d7dd42523c11e695bb005056b024c9</xsd:appinfo>
+							<xsd:documentation>SAP Code</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="boid" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">e3d7dd43523c11e6bd44005056b024c9</xsd:appinfo>
+							<xsd:documentation>对象ID</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="nodeid" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">e3d7dd44523c11e69310005056b024c9</xsd:appinfo>
+							<xsd:documentation>城市公司</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="ctime" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">e3d7dd45523c11e6b828005056b024c9</xsd:appinfo>
+							<xsd:documentation>时间</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="reqXML" type="xsd:string">
+						<xsd:annotation>
+							<xsd:appinfo source="http://sap.com/xi/TextID">e3d7dd46523c11e69858005056b024c9</xsd:appinfo>
+							<xsd:documentation>app传入的XML数据</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+		<xsd:schema xmlns="urn:cofcogroup.com:I_ECC:APP" xmlns:p9="urn:cofcogroup.com:I_APP:ECC" targetNamespace="urn:cofcogroup.com:I_ECC:APP" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="urn:cofcogroup.com:I_APP:ECC"/>
+			<xsd:element name="MT_APP_REQUEST" type="p9:DT_APP_REQUEST"/>
+			<xsd:element name="MT_APP_RESPONSE" type="p9:DT_APP_RESPONSE"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="MT_APP_REQUEST">
+		<wsdl:documentation/>
+		<wsdl:part name="MT_APP_REQUEST" element="p2:MT_APP_REQUEST"/>
+	</wsdl:message>
+	<wsdl:message name="MT_APP_RESPONSE">
+		<wsdl:documentation/>
+		<wsdl:part name="MT_APP_RESPONSE" element="p2:MT_APP_RESPONSE"/>
+	</wsdl:message>
+	<wsdl:message name="p3.FMT_common">
+		<wsdl:documentation/>
+		<wsdl:part name="FMT_common" element="p3:FMT_common"/>
+	</wsdl:message>
+	<wsdl:portType name="SI_APP_TO_SAP_S_OUT">
+		<wsdl:documentation/>
+		<wsdl:operation name="appcall">
+			<wsdl:documentation/>
+			<wsp:Policy>
+				<wsp:PolicyReference URI="#OP_appcall"/>
+			</wsp:Policy>
+			<wsdl:input message="p1:MT_APP_REQUEST"/>
+			<wsdl:output message="p1:MT_APP_RESPONSE"/>
+			<wsdl:fault name="p3.FMT_common" message="p1:p3.FMT_common"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="SI_APP_TO_SAP_S_OUTBinding" type="p1:SI_APP_TO_SAP_S_OUT">
+		<binding transport="http://schemas.xmlsoap.org/soap/http" xmlns="http://schemas.xmlsoap.org/wsdl/soap/"/>
+		<wsdl:operation name="appcall">
+			<wsdl:input>
+				<body xmlns="http://schemas.xmlsoap.org/wsdl/soap/" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<body xmlns="http://schemas.xmlsoap.org/wsdl/soap/" use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="p3.FMT_common">
+				<fault xmlns="http://schemas.xmlsoap.org/wsdl/soap/" name="p3.FMT_common" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="SI_APP_TO_SAP_S_OUTService">
+		<wsdl:port name="HTTP_Port" binding="p1:SI_APP_TO_SAP_S_OUTBinding">
+			<address location="http://lidappdb1.cofco.com:50000/XISOAPAdapter/MessageServlet?senderParty=&amp;senderService=BS_APP&amp;receiverParty=&amp;receiverService=&amp;interface=SI_APP_TO_SAP_S_OUT&amp;interfaceNamespace=urn%3Acofcogroup.com%3AI_APP%3AECC" xmlns="http://schemas.xmlsoap.org/wsdl/soap/"/>
+		</wsdl:port>
+		<wsdl:port name="HTTPS_Port" binding="p1:SI_APP_TO_SAP_S_OUTBinding">
+			<address location="https://lidappdb1.cofco.com:50001/XISOAPAdapter/MessageServlet?senderParty=&amp;senderService=BS_APP&amp;receiverParty=&amp;receiverService=&amp;interface=SI_APP_TO_SAP_S_OUT&amp;interfaceNamespace=urn%3Acofcogroup.com%3AI_APP%3AECC" xmlns="http://schemas.xmlsoap.org/wsdl/soap/"/>
+		</wsdl:port>
+	</wsdl:service>
+	<wsdl:documentation/>
+	<wsp:UsingPolicy wsdl:required="false"/>
+	<wsp:Policy wsu:Id="OP_appcall"/>
+</wsdl:definitions>

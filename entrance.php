@@ -142,7 +142,7 @@ function executeSoapNonWsdlSoapVar(){
 
 function executeSoapWsdlSap(){
     try{
-        $soap = new SoapClient(null,array('location'=>'http://lidappdb1.cofco.com:50000/dir/wsdl?p=sa/8cf1e89723a930039ef202f3c42e5df0','uri'=>'urn:cofcogroup.com:I_ECC:APP'));
+        $soap = new SoapClient(null,array('location'=>'http://lidappdb1.cofco.com:50000/dir/wsdl?p=sa/8cf1e89723a930039ef202f3c42e5df0','uri'=>'urn:cofcogroup.com:I_APP:ECC'));
         //ws
         $ns_wsse = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";//WS-Security namespace
         $ns_wsu = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";//WS-Security namespace
@@ -159,8 +159,36 @@ function executeSoapWsdlSap(){
 
         $secHeaderValue=new SoapVar($userToken, SOAP_ENC_OBJECT, NULL, $ns_wsse, 'Security', $ns_wsse);
         $secHeader = new SoapHeader($ns_wsse, 'Security', $secHeaderValue);
-        $result2 = $soap->__soapCall("GetDeviceInformation",array(),null,$secHeader);
+        $result2 = $soap->__soapCall("appcall",array(),null,$secHeader);
         echo $result2;
+    }
+    catch(SoapFault $fault) {
+        echo '<br>'.$fault;
+    }
+}
+
+function executeSoapWsdlSap1(){
+    try{
+        // wsdl 方式调用
+        $url = "http://lidappdb1.cofco.com:50000/dir/wsdl?p=sa/8cf1e89723a930039ef202f3c42e5df0";
+        $url ="SI_APP_TO_SAP_S_OUT.wsdl";
+        $login = "APP_PI";
+        $password ="App2016!qaz";
+
+        $soapClient = new SoapClient($url,
+            [
+                "login"=>$login,
+                "password"=>$password,
+                "encoding" =>"utf-8",
+                "trace" => true
+            ]);
+
+
+        $method = "appcall";
+        $param = ["bsid"=>"SAP","bscode"=>"PS01","boid"=>"","ctime"=>"2016-08-03 17:39:03","nodeid"=>"","reqXML"=>""];
+        $result = $soapClient->$method($param);
+        $result = json_encode($result);
+        $result = json_decode($result,true);
     }
     catch(SoapFault $fault) {
         echo '<br>'.$fault;
@@ -188,5 +216,5 @@ class UserNameT2 {
     }
 }
 
-executeSoapWsdlSap();
+executeSoapWsdlSap1();
 
