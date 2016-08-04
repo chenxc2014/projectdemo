@@ -185,10 +185,12 @@ function executeSoapWsdlSap1(){
 
 
         $method = "appcall";
-        $param = ["bsid"=>"SAP","bscode"=>"PS01","boid"=>"","ctime"=>"2016-08-03 17:39:03","nodeid"=>"","reqXML"=>""];
+        $param = ["bsid"=>"SAP","bscode"=>"SD01","boid"=>"","ctime"=>"2016-08-03 17:39:03","nodeid"=>"","reqXML"=>""];
         $result = $soapClient->$method($param);
         $result = json_encode($result);
         $result = json_decode($result,true);
+        $repXml = json_decode($result["repXML"],true);
+
     }
     catch(SoapFault $fault) {
         echo '<br>'.$fault;
